@@ -1,3 +1,7 @@
+<img width="680" height="864" alt="image" src="https://github.com/user-attachments/assets/e641bbbe-a728-4875-b46f-6d83bc26c16b" />
+<img width="504" height="839" alt="image" src="https://github.com/user-attachments/assets/1ea0d04f-091f-411d-a98d-09b84e347c43" />
+
+
 Developer note-
 I created this project as a way to learn python while building something, before this I created a simple bfs path planner using code i learnt daily from the book "Let us python", however this project has largely AI-written code due to the harsh truth that manually writing syntax will be dead in a few year's time if not sooner, so I better work with it rather than go against it.Errors have been debugged manually (which well took some time) and game logic and pseudocode has largely been my part, will be working on a v2 sooner which will incorporate a much better robot path planning system and a realistc battery drowning which will depend on type of move robot uses.
 Below is an AI-generated summary for the game, enjoy.
