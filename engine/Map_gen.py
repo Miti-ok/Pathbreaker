@@ -30,6 +30,9 @@ class GridMap:
 
     def in_bounds(self, x: int, y: int) -> bool:
         return 0 <= x < self.width and 0 <= y < self.height
+    def __repr__(self):
+        return f"GridMap({self.width}x{self.height}, start={self.start}, end={self.end}, obstacles={sum(1 for c in self.cells.values() if c.name=='OBSTACLE')})"
+
 # -----------------------------
 # Map generator
 # -----------------------------

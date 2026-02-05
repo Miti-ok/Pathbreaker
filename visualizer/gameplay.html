@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pathbreaker — Gameplay</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>Pathbreaker</h1>
+
+<div class="game-hud">
+    <div id="turnInfo">Click "Next Robot Move" to start.</div>
+    <div class="battery-wrap">
+        <div class="battery-label">
+            Battery: <span id="batteryText">--</span>
+        </div>
+        <div class="battery-bar">
+            <div id="batteryFill" class="battery-fill"></div>
+        </div>
+    </div>
+</div>
+
+<div id="grid" class="gameplay-grid"></div>
+
+<button id="nextMove">Next Robot Move</button>
+
+<script src="gameplay.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,232 @@
+* {
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  background: radial-gradient(circle at top, #0f172a, #020617);
+  color: #e5e7eb;
+  text-align: center;
+  margin: 0;
+  padding: 30px;
+}
+
+h1 {
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  color: #94a3b8;
+  margin-bottom: 30px;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+}
+
+#grid {
+  background: rgba(255, 255, 255, 0.04);
+  padding: 14px;
+  border-radius: 16px;
+  display: grid;
+  grid-template-columns: repeat(8, 48px);
+  grid-template-rows: repeat(8, 48px);
+  gap: 6px;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.1);
+  width: max-content;
+}
+
+.gameplay-grid {
+  margin: 0 auto 16px auto;
+}
+
+.cell {
+  background: #334155;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.1s, background 0.2s;
+}
+.footer {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #9aa4b2;
+  margin-top: 20px;
+}
+
+.footer-link {
+  color: #7dd3fc;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+  color: #38bdf8;
+}
+
+
+
+.cell:hover {
+  transform: scale(1.05);
+}
+.robot{
+    background-color: cyan;
+}
+.cell.robot {
+  background: #22d3ee !important;
+  box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.5) inset;
+}
+
+.cell.selected-obstacle {
+  outline: 2px solid #fde047;
+  outline-offset: -3px;
+}
+
+.cell.legal-move {
+  background: rgba(244, 114, 182, 0.45);
+  box-shadow: 0 0 0 2px rgba(244, 114, 182, 0.75) inset;
+}
+
+.game-hud {
+  max-width: 640px;
+  margin: 0 auto 16px auto;
+  text-align: left;
+}
+
+#turnInfo {
+  margin-bottom: 10px;
+  color: #cbd5e1;
+  font-size: 0.95rem;
+}
+
+.battery-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.battery-label {
+  color: #e2e8f0;
+  font-size: 0.9rem;
+}
+
+.battery-bar {
+  width: 100%;
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.25);
+  overflow: hidden;
+}
+
+.battery-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ef4444 0%, #f59e0b 45%, #22c55e 100%);
+  transition: width 0.2s ease;
+}
+
+
+.start {
+  background: #22c55e;
+}
+
+.end {
+  background: #ef4444;
+}
+
+.obstacle {
+  background: #facc15;
+}
+
+.panel {
+  width: 220px;
+  text-align: left;
+}
+
+.panel label {
+  display: block;
+  margin-bottom: 6px;
+}
+
+input[type="range"] {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #334155;
+  color: white;
+}
+
+button:hover {
+  background: #475569;
+}
+
+.legend {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 14px;
+    color: #e5e7eb;
+}
+
+.obstacle-limit {
+  margin: 0 0 12px 0;
+  color: #cbd5e1;
+  font-size: 0.95rem;
+  text-align: left;
+}
+
+.controls-note {
+  margin: 8px 0 0 0;
+  color: #e2e8f0;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.legend-box {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+}
+
+/* Colors */
+.legend-box.start {
+    background: #22c55e;
+}
+
+.legend-box.end {
+    background: #ef4444;
+}
+
+.legend-box.obstacle {
+    background: #facc15;
+}
+
+
+.box {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+}
+
+footer {
+  margin-top: 40px;
+  color: #64748b;
+  font-size: 14px;
+}

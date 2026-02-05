@@ -2,7 +2,7 @@
 
 from typing import Tuple, Dict, List, Optional
 from collections import deque
-from Map_gen import GridMap, CellType
+from engine.Map_gen import GridMap, CellType
 
 Position = Tuple[int, int]
 
