@@ -95,6 +95,12 @@ h1 {
   text-align: left;
 }
 
+.objective-text {
+  margin-bottom: 8px;
+  color: #f8fafc;
+  font-size: 0.95rem;
+}
+
 #turnInfo {
   margin-bottom: 10px;
   color: #cbd5e1;
