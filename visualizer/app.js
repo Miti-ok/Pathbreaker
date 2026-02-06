@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let startPos = [7, 0];
     let endPos = [0, 7];
     let dragging = null;
+    let activePointerId = null;
 
     // ================================
     // INIT GRID
@@ -44,10 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 cell.dataset.row = r;
                 cell.dataset.col = c;
 
-                cell.addEventListener("mousedown", () => onCellMouseDown(r, c));
-                cell.addEventListener("mouseenter", () => onCellHover(r, c));
-                cell.addEventListener("mouseup", () => dragging = null);
-
                 gridEl.appendChild(cell);
             }
         }
@@ -64,34 +61,70 @@ document.addEventListener("DOMContentLoaded", () => {
     // ================================
     // INTERACTION
     // ================================
-    function onCellMouseDown(r, c) {
+    function onCellPointerDown(r, c, pointerId) {
         const type = gridState[r][c];
 
         if (type === "start" || type === "end") {
             dragging = type;
+            activePointerId = pointerId;
             return;
         }
 
         toggleObstacle(r, c);
     }
 
-    function onCellHover(r, c) {
+    function onCellDragMove(r, c) {
         if (!dragging) return;
+        if (r < 0 || r >= GRID_SIZE || c < 0 || c >= GRID_SIZE) return;
         if (gridState[r][c] !== "empty") return;
 
         if (dragging === "start") {
+            if (startPos[0] === r && startPos[1] === c) return;
             gridState[startPos[0]][startPos[1]] = "empty";
             startPos = [r, c];
             gridState[r][c] = "start";
         }
 
         if (dragging === "end") {
+            if (endPos[0] === r && endPos[1] === c) return;
             gridState[endPos[0]][endPos[1]] = "empty";
             endPos = [r, c];
             gridState[r][c] = "end";
         }
 
         render();
+    }
+
+    function clearDragging(pointerId = null) {
+        if (pointerId !== null && activePointerId !== pointerId) return;
+        dragging = null;
+        activePointerId = null;
+    }
+
+    function getCellFromEventTarget(target) {
+        const cell = target.closest(".cell");
+        if (!cell) return null;
+        return {
+            r: Number(cell.dataset.row),
+            c: Number(cell.dataset.col),
+        };
+    }
+
+    function onGridPointerDown(e) {
+        const pos = getCellFromEventTarget(e.target);
+        if (!pos) return;
+        onCellPointerDown(pos.r, pos.c, e.pointerId);
+    }
+
+    function onGridPointerMove(e) {
+        if (!dragging || activePointerId !== e.pointerId) return;
+        e.preventDefault();
+        const target = document.elementFromPoint(e.clientX, e.clientY);
+        if (!target) return;
+
+        const pos = getCellFromEventTarget(target);
+        if (!pos) return;
+        onCellDragMove(pos.r, pos.c);
     }
 
     function toggleObstacle(r, c) {
@@ -203,6 +236,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     resetBtn?.addEventListener("click", initGrid);
+    gridEl.addEventListener("pointerdown", onGridPointerDown);
+    gridEl.addEventListener("pointermove", onGridPointerMove);
+    window.addEventListener("pointerup", (e) => clearDragging(e.pointerId));
+    window.addEventListener("pointercancel", (e) => clearDragging(e.pointerId));
 
     // ================================
     // START

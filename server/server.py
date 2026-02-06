@@ -233,7 +233,8 @@ def _compute_legal_obstacle_moves(
 def start_game(map_data: MapData):
     grid_map = build_gridmap(map_data)
     robot = Robot(grid_map)
-    max_battery = robot.battery
+    robot.battery = 21
+    max_battery = 21
     moved = robot.move()
 
     session_id = str(uuid4())

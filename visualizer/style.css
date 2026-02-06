@@ -3,12 +3,18 @@
   font-family: system-ui, sans-serif;
 }
 
+:root {
+  --cell-size: 48px;
+  --cell-gap: 6px;
+  --page-padding: 30px;
+}
+
 body {
   background: radial-gradient(circle at top, #0f172a, #020617);
   color: #e5e7eb;
   text-align: center;
   margin: 0;
-  padding: 30px;
+  padding: var(--page-padding);
 }
 
 h1 {
@@ -31,11 +37,12 @@ h1 {
   padding: 14px;
   border-radius: 16px;
   display: grid;
-  grid-template-columns: repeat(8, 48px);
-  grid-template-rows: repeat(8, 48px);
-  gap: 6px;
+  grid-template-columns: repeat(8, var(--cell-size));
+  grid-template-rows: repeat(8, var(--cell-size));
+  gap: var(--cell-gap);
   box-shadow: 0 0 0 1px rgba(255,255,255,0.1);
   width: max-content;
+  touch-action: none;
 }
 
 .gameplay-grid {
@@ -176,6 +183,11 @@ button:hover {
   background: #475569;
 }
 
+.controls {
+  width: min(100%, 420px);
+  text-align: left;
+}
+
 .legend {
     margin-top: 20px;
     display: flex;
@@ -235,4 +247,55 @@ footer {
   margin-top: 40px;
   color: #64748b;
   font-size: 14px;
+}
+
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .controls {
+    width: min(100%, 560px);
+  }
+
+  .game-hud {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --cell-size: 40px;
+    --cell-gap: 5px;
+    --page-padding: 16px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .game-hud {
+    margin-bottom: 12px;
+  }
+
+  button {
+    padding: 12px;
+    font-size: 1rem;
+  }
+
+  .controls-note,
+  .obstacle-limit,
+  #turnInfo,
+  .objective-text {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 430px) {
+  :root {
+    --cell-size: 34px;
+    --cell-gap: 4px;
+  }
 }

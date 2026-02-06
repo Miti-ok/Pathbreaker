@@ -13,9 +13,8 @@ class Robot:
         self.position: Position = grid_map.start
         self.end: Position = grid_map.end
 
-        # compute battery based on empty-map shortest path
-        shortest = self._shortest_path_length_empty()
-        self.battery: int = int(1.5 * shortest)
+        # Fixed initial battery for current game balancing.
+        self.battery: int = 21
 
     # -----------------------------
     # Public API
