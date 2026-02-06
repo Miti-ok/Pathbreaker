@@ -14,6 +14,19 @@
     <div class="objective-text">
         Objective: Drain the robot's battery before it reaches the end.
     </div>
+    <details class="rules-panel">
+        <summary>Rules</summary>
+        <ul class="rules-list">
+            <li>Robot moves one step each turn and loses 1 battery per move.</li>
+            <li>Your objective is to drain the robot's battery before it reaches the end.</li>
+            <li>After each robot move, you may move exactly one obstacle.</li>
+            <li>You can move an obstacle only to one of its neighboring cells.</li>
+            <li>An obstacle move is illegal if it blocks all paths from Start to End.</li>
+            <li>An obstacle cannot be moved onto Start, End, the robot, or another obstacle.</li>
+            <li>An obstacle cannot immediately move back to where it came from in the previous turn.</li>
+            <li>Robot wins if it reaches End. You win if the robot cannot move.</li>
+        </ul>
+    </details>
     <div id="turnInfo">Click "Next Robot Move" to start.</div>
     <div class="battery-wrap">
         <div class="battery-label">
