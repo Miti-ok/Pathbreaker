@@ -1,23 +1,26 @@
 let savedMap = null;
 let gridEl = null;
-let nextMoveBtn = null;
+let startGameBtn = null;
 let turnInfoEl = null;
 let batteryTextEl = null;
 let batteryFillEl = null;
 let sessionId = null;
 let robotPos = null;
 let gameOver = false;
-let phase = "robot_turn"; // robot_turn | player_obstacle_turn
+let gameStarted = false;
+let phase = "not_started"; // not_started | robot_turn | player_obstacle_turn
 let selectedObstacle = null;
 let legalMoves = [];
 let lastObstacleMove = null; // { from: [r,c], to: [r,c] }
 
 const API_BASE = "https://pathbreaker-production.up.railway.app";
 
+
+
 document.addEventListener("DOMContentLoaded", async () => {
 
     gridEl = document.getElementById("grid");
-    nextMoveBtn = document.getElementById("nextMove");
+    startGameBtn = document.getElementById("startGame");
     turnInfoEl = document.getElementById("turnInfo");
     batteryTextEl = document.getElementById("batteryText");
     batteryFillEl = document.getElementById("batteryFill");
@@ -32,7 +35,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     drawGrid(savedMap, robotPos);
     updateBattery(null, null);
 
-    nextMoveBtn.addEventListener("click", nextMove);
+    startGameBtn.addEventListener("click", startGame);
     gridEl.addEventListener("click", onGridClick);
 });
 
@@ -147,6 +150,56 @@ async function applyObstacleMove(fromPos, toPos) {
 
 
 /* ==============================
+        GAME FLOW
+============================== */
+
+function hideStartButton() {
+    startGameBtn.style.display = "none";
+}
+
+
+async function startGame() {
+    if (gameStarted || gameOver) return;
+
+    startGameBtn.disabled = true;
+    turnInfoEl.textContent = "Robot is making the first move...";
+
+    try {
+        await robotTurn();
+        gameStarted = true;
+        hideStartButton();
+    } catch (err) {
+        console.error(err);
+        turnInfoEl.textContent = "Could not start game. Try again.";
+        startGameBtn.disabled = false;
+    }
+}
+
+
+async function robotTurn() {
+    if (gameOver) return;
+    phase = "robot_turn";
+
+    const result = await getRobotMove(savedMap);
+
+    if (result.session_id) {
+        sessionId = result.session_id;
+    }
+
+    robotPos = result.robot_position;
+    updateBattery(result.battery, result.max_battery);
+    drawGrid(savedMap, robotPos);
+
+    if (result.game_over) {
+        handleGameOver(result);
+        return;
+    }
+
+    await enterObstacleTurn();
+}
+
+
+/* ==============================
         OBSTACLE TURN
 ============================== */
 
@@ -197,11 +250,10 @@ async function moveSelectedObstacleTo(targetPos) {
 
     selectedObstacle = null;
     legalMoves = [];
-    phase = "robot_turn";
-    turnInfoEl.textContent = "Obstacle moved. Click Next Robot Move.";
-    nextMoveBtn.disabled = false;
-
     drawGrid(savedMap, robotPos);
+
+    turnInfoEl.textContent = "Robot is moving...";
+    await robotTurn();
 }
 
 
@@ -236,7 +288,7 @@ function updateBattery(current, max) {
 function handleGameOver(result) {
     gameOver = true;
     phase = "robot_turn";
-    nextMoveBtn.disabled = true;
+    startGameBtn.disabled = true;
 
     if (result.winner === "robot") {
         turnInfoEl.textContent = "Robot reached the goal. Robot wins.";
@@ -253,50 +305,19 @@ async function enterObstacleTurn() {
     legalMoves = [];
 
     if (!(await hasAtLeastOneObstacleMove())) {
-        phase = "robot_turn";
-        turnInfoEl.textContent = "No legal obstacle move available. Click Next Robot Move.";
-        nextMoveBtn.disabled = false;
+        turnInfoEl.textContent = "No legal obstacle move available. Robot moves again.";
         drawGrid(savedMap, robotPos);
+        // Let UI paint before robot immediately continues.
+        setTimeout(() => {
+            robotTurn().catch((err) => {
+                console.error(err);
+                alert("Robot move failed.");
+            });
+        }, 250);
         return;
     }
 
     phase = "player_obstacle_turn";
     turnInfoEl.textContent = "Your turn: click an obstacle, then click a pink cell to move it.";
-    nextMoveBtn.disabled = true;
     drawGrid(savedMap, robotPos);
-}
-
-
-/* ==============================
-        NEXT MOVE
-============================== */
-
-async function nextMove() {
-    if (gameOver) return;
-    if (phase !== "robot_turn") {
-        alert("Move one obstacle first before the robot moves again.");
-        return;
-    }
-
-    try {
-        const result = await getRobotMove(savedMap);
-
-        if (result.session_id) {
-            sessionId = result.session_id;
-        }
-
-        robotPos = result.robot_position;
-        updateBattery(result.battery, result.max_battery);
-        drawGrid(savedMap, robotPos);
-
-        if (result.game_over) {
-            handleGameOver(result);
-            return;
-        }
-
-        await enterObstacleTurn();
-    } catch (err) {
-        console.error(err);
-        alert("Move failed. Make sure backend is running and session is valid.");
-    }
 }
