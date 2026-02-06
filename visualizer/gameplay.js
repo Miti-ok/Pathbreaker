@@ -12,7 +12,7 @@ let selectedObstacle = null;
 let legalMoves = [];
 let lastObstacleMove = null; // { from: [r,c], to: [r,c] }
 
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "https://pathbreaker-production.up.railway.app";
 
 document.addEventListener("DOMContentLoaded", async () => {
 
