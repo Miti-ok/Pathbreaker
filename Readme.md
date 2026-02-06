@@ -1,152 +1,97 @@
-<img width="680" height="864" alt="image" src="https://github.com/user-attachments/assets/e641bbbe-a728-4875-b46f-6d83bc26c16b" />
-<img width="504" height="839" alt="image" src="https://github.com/user-attachments/assets/1ea0d04f-091f-411d-a98d-09b84e347c43" />
+# Pathbreaker
 
+Pathbreaker is a turn-based robot path-planning strategy game:
+- The **robot** tries to reach the goal.
+- The **user** tries to drain the robot's battery before it reaches the goal by moving obstacles strategically.
 
-Developer note-
-I created this project as a way to learn python while building something, before this I created a simple bfs path planner using code i learnt daily from the book "Let us python", however this project has largely AI-written code due to the harsh truth that manually writing syntax will be dead in a few year's time if not sooner, so I better work with it rather than go against it.Errors have been debugged manually (which well took some time) and game logic and pseudocode has largely been my part, will be working on a v2 sooner which will incorporate a much better robot path planning system and a realistc battery drowning which will depend on type of move robot uses.
-Below is an AI-generated summary for the game, enjoy.
+This project is built as a full-stack system with a Python planning engine, FastAPI backend, and browser frontend.
 
+## Architecture
 
-Adversarial Robot Path Planning Game
+Frontend -> Backend API -> Planning Engine
 
-This is a turn-based terminal game where a robot tries to reach a goal on a 2D grid while a human player dynamically moves obstacles to slow it down.
-The twist is that the robot replans its path every turn and has a limited battery, so the user has to be smart instead of just blocking everything.
+- `visualizer/`:
+  - `index.html` + `app.js`: Map builder
+  - `gameplay.html` + `gameplay.js`: Game turns, obstacle interaction, rendering
+- `server/`:
+  - `server.py`: FastAPI app, sessions, API endpoints, move validation
+- `engine/`:
+  - `Map_gen.py`: Grid map and cell types
+  - `robot.py`: Robot state + path planning logic
+  - `Obstacles.py`, `pathfinding.py`: supporting logic
 
-The project started as a learning exercise for path planning and slowly turned into a proper game with fairness rules and interaction design.
+## Core Gameplay Rules
 
-How the Game Works
+1. Robot moves one step per turn.
+2. Battery decreases by 1 each robot move.
+3. User can move one obstacle after each robot move.
+4. Obstacle moves must keep at least one valid path to goal.
+5. Obstacle cannot be moved immediately back to where it came from.
+6. User wins if robot cannot move (battery/path constraints).
+7. Robot wins if it reaches the goal.
 
-The map is a 2D grid with a start (S) and end (E).
+## API Endpoints
 
-A robot (R) starts at S and tries to reach E.
+- `GET /ping`
+- `POST /start-game`
+- `POST /next-move`
+- `POST /legal-obstacle-moves`
+- `POST /move-obstacle`
 
-The robot moves one step per turn using shortest-path planning (BFS).
+The backend is session-based, so robot state persists across turns.
 
-Each robot move consumes 1 battery unit.
+## Local Setup
 
-The robot’s initial battery is set to 1.5× the shortest path length on an empty map.
+### 1. Install dependencies
 
-The user’s goal is to drain the robot’s battery before it reaches the end.
+```bash
+pip install -r requirements.txt
+```
 
-User Actions
-Initial Setup
+### 2. Run backend
 
-The user places a limited number of obstacles (X) on empty cells.
+```bash
+python -m uvicorn server.server:app --reload
+```
 
-After each placement, the game checks that at least one path from start to end still exists.
+### 3. Run frontend
 
-Obstacle count is capped based on map size (≈12% of total cells) to keep the game fair.
+Open:
+- `visualizer/index.html` for map generation
+- `visualizer/gameplay.html` for gameplay flow (normally reached from map builder)
 
-During the Game
+If using local backend, set in `visualizer/gameplay.js`:
 
-The user controls a cursor (C) using w / a / s / d.
+```js
+const API_BASE = "http://127.0.0.1:8000";
+```
 
-When the cursor is on an obstacle:
+If using deployed backend, point `API_BASE` to your public URL.
 
-Press p to select it
+## Deployment Notes
 
-Use w / a / s / d to preview moving it to a neighboring cell
+### Backend (Render/Railway)
 
-Press p again to confirm
+- Build command:
+  - `pip install -r requirements.txt`
+- Start command:
+  - `uvicorn server.server:app --host 0.0.0.0 --port $PORT`
 
-Press q to cancel
+### Frontend
 
-Only one obstacle move per user turn is allowed.
+Can be hosted as static files (e.g. GitHub Pages, Netlify).
 
-Fairness Rules (Important)
+## Requirements
 
-To avoid trivial or exploitable gameplay, a few constraints are enforced:
+See `requirements.txt`:
+- FastAPI
+- Uvicorn
+- Pydantic
+- Rich
 
-❌ Obstacles cannot block all paths from the robot to the goal
+## Current Goal
 
-❌ An obstacle cannot be immediately moved back to its previous position
-
-❌ Obstacles cannot be placed on the start, end, or robot
-
-❌ Obstacle count is limited relative to map size
-
-These rules force the user to strategically reshape the environment instead of stalling the robot indefinitely.
-
-Controls Summary
-w / a / s / d  → move cursor or obstacle
-p              → place / select / confirm
-q              → cancel obstacle move
-
-
-Legend:
-
-S = Start
-E = End
-R = Robot
-X = Obstacle
-C = Cursor
-O = Empty cell
-
-Project Structure
-.
-├── main.py            # Game loop and orchestration
-├── Map_gen.py         # Grid map, rendering, and utilities
-├── pathfinding.py     # BFS path existence check
-├── Obstacles.py       # Obstacle placement and movement rules
-├── user_side.py       # User interaction and input handling
-├── robot.py           # Robot logic and path planning
-
-
-Each module has a single responsibility, which makes the code easier to reason about and extend.
-
-Why BFS?
-
-For version 1, the robot uses Breadth-First Search:
-
-It guarantees the shortest path on an unweighted grid
-
-It’s easy to debug and explain
-
-It reacts cleanly to dynamic obstacle changes
-
-More advanced planners (weighted costs, diagonals, heuristics) are intentionally left for future versions.
-
-How to Run
-
-Requirements:
-
-Python 3.10+
-
-rich library
-
-Install dependencies:
-
-pip install rich
-
-
-Run the game:
-
-python main.py
-
-Future Ideas (Not Implemented Yet)
-
-Weighted movement costs (turning, rerouting penalties)
-
-Diagonal movement
-
-Difficulty presets
-
-Visual battery bar
-
-Logging and analysis of robot paths
-
-These were intentionally left out to keep v1 focused and stable.
-
-Why This Project Exists
-
-This project was built to better understand:
-
-path planning under constraints
-
-dynamic replanning
-
-fairness in adversarial systems
-
-how small rule changes affect behavior
-
-It’s part game, part simulation, and part learning experiment.
+Pathbreaker is designed as a robotics-style learning project:
+- Backend is authoritative for planning and rule validation.
+- Frontend focuses on interaction and visualization.
+- Engine remains the planning brain and can evolve to A*/Dijkstra in future versions.
