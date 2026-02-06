@@ -221,6 +221,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // CONTROLS
     // ================================
     confirmBtn.addEventListener("click", () => {
+        if (countObstacles() === 0) {
+            alert("Place at least one obstacle before confirming the map.");
+            return;
+        }
+
         if (!pathExists(startPos, endPos)) {
             alert("Invalid map: no path exists.");
             return;
